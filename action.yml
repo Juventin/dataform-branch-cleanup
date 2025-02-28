@@ -29,7 +29,6 @@ jobs:
     steps:
       - name: Set environment variables
         run: |
-          echo "REPOSITORY=${{ github.event.repository.name }}" >> $GITHUB_ENV
           echo "BRANCH_NAME=${{ github.event.ref }}" >> $GITHUB_ENV
 
       - name: Authenticate with GCP
@@ -49,5 +48,5 @@ jobs:
       - name: Delete Dataform Workspace
         run: |
           echo "Deleting Dataform workspace: ${{ env.BRANCH_NAME }}"
-          curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${{ inputs.project_id }}/locations/${{ inputs.location }}/repositories/${{ env.REPOSITORY }}/workspaces/${{ env.BRANCH_NAME }}" \
+          curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${{ inputs.project_id }}/locations/${{ inputs.location }}/repositories/${{ inputs.dataform_repo_name }}/workspaces/${{ env.BRANCH_NAME }}" \
             -H "Authorization: Bearer $(gcloud auth print-access-token)"
