@@ -31,7 +31,8 @@ runs:
         echo "BRANCH_NAME=${{ github.event.ref }}" >> $GITHUB_ENV
 
     - name: Debug SA_KEY
-      run: echo "SA_KEY is set"
+      shell: bash
+      run: echo "$SA_KEY is set. SA_KEY"
       env:
         SA_KEY: $SA_KEY
 
