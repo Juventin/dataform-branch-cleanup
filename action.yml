@@ -21,7 +21,9 @@ inputs:
     description: |-
       Location of the Dataform repository. For example, `us-central1`.
     required: true
-  SA_KEY:
+
+secrets:
+  sa_key:
     description: |-
       Service account key used to authenticate with GCP (JSON format).
     required: true
@@ -38,7 +40,7 @@ runs:
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: ${{ inputs.SA_KEY }}
+        credentials_json: ${{ secrets.sa_key }}
 
     - name: Delete BigQuery Schemas
       shell: bash
