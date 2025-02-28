@@ -61,7 +61,7 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-    - uses: 'juventin/dataform-branch-cleanup'
+    - uses: 'juventin/dataform-branch-cleanup@v1.0.0'
       with:
         project_id: 'your-gcp-project-id'
         dataform_repo_name: 'your-dataform-repo-name'
