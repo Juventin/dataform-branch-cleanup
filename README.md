@@ -12,24 +12,22 @@ Managing multiple development branches in a Dataform project can quickly become 
 **Dataform Workspaces:**
 - Automatically deletes the Dataform workspace associated with the deleted branch.
 
-### Real-Life Example
-
-Imagine your team is working on multiple features simultaneously, each in its own branch. You can configure Dataform to make each branch create its own BigQuery schemas. Once a feature is completed and the branch is merged and deleted, this action will automatically clean up the associated resources. This ensures that your GCP environment remains clean and free of unused resources, saving costs and reducing clutter.
+> Imagine your team is working on multiple features simultaneously, each in its own branch. You can configure Dataform to make each branch create its own BigQuery schemas. Once a feature is completed and the branch is merged and deleted, this action will automatically clean up the associated resources. This ensures that your GCP environment remains clean and free of unused resources, saving costs and reducing clutter.
 
 ## Prerequisites
 
-Before using this action, ensure you have a Google Cloud Platform (GCP) project using BigQuery and a Dataform linked to a GitHub repository.
+Before using this action, ensure you have a Google Cloud Platform (GCP) project using **BigQuery** and **Dataform linked to a GitHub repository**.
 
 Here is the Dataform configuration necessary:
-### General configuration
-- *Make sure your Dataform project is linked to the GitHub repository using this action.*
+- **General configuration**
+  - *Make sure your Dataform project is linked to the GitHub repository using this action.*
 
-### Workspace compilation overrides
-- Schema suffix: `${workspaceName}`
+- **Workspace compilation overrides**
+  - Schema suffix: `${workspaceName}`
 
 ## Usage
 
-Once the setup is complete, this action will automatically run whenever a branch is deleted in your repository. It will clean up the corresponding BigQuery schemas and Dataform workspaces in GCP.
+Once the setup is complete, this action will automatically run whenever a branch is **deleted** in your repository. It will clean up the corresponding BigQuery schemas and Dataform workspaces in GCP.
 
 ### Setup
 
