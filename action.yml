@@ -1,8 +1,6 @@
 name: "Cleanup After Branch Deletion"
 author: "Jeremy Juventin"
-description: |
-  This GitHub Action cleans up resources in Google Cloud Platform (GCP) after a branch is deleted.
-  It deletes corresponding BigQuery schemas and Dataform workspaces.
+description: This GitHub Action cleans up rBigQuery schemas and Dataform workspaces after a branch is deleted.
 
 inputs:
   project_id:
