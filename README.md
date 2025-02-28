@@ -46,13 +46,6 @@ Once the setup is complete, this action will automatically run whenever a branch
    - Navigate to *Settings > Secrets and variables > Actions > Secrets*.
    - Add a new **Repository secret** with the name `SA_KEY` and paste the JSON key content.
 
-3. **Add the environment variables to GitHub variables**:
-   - Go to your GitHub repository.
-   - Navigate to *Settings > Secrets and variables > Actions > Variables*.
-   - Add the following **Repository variables**:
-     - `PROJECT_ID`: The GCP project ID.
-     - `DATAFORM_REPO_LOCATION`: The location of the Dataform repository. (e.g. `us-central1`)
-
 3. **Create a workflow file**:
    - In your repository, create a new file at `.github/workflows/cleanup.yml` with the following content:
 
@@ -70,9 +63,9 @@ jobs:
     steps:
     - uses: 'juventin/dataform-branch-cleanup'
       with:
-        project_id: ${{ vars.PROJECT_ID }}
-        location: ${{ vars.DATAFORM_REPO_LOCATION }}
-      env:
+        project_id: 'your-gcp-project-id'
+        dataform_repo_name: 'your-dataform-repo-name'
+        dataform_repo_location: 'your-dataform-repo-location' (e.g. 'us-central1')
         SA_KEY: ${{ secrets.SA_KEY }}
 ```
 

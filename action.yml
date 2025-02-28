@@ -13,37 +13,46 @@ inputs:
     description: |-
       ID of the project where your Dataform workspace is located.
     required: true
-  location:
+  dataform_repo_name:
+    description: |-
+      Name of the Dataform repository.
+    required: true
+  dataform_repo_location:
     description: |-
       Location of the Dataform repository. For example, `us-central1`.
     required: true
+  SA_KEY:
+    description: |-
+      Service account key used to authenticate with GCP (JSON format).
+    required: true
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo "BRANCH_NAME=${{ github.event.ref }}" >> $GITHUB_ENV
+        echo "SA_KEY=${{ inputs.SA_KEY }}" >> $GITHUB_ENV
 
-jobs:
-  cleanup:
-    if: github.event.ref_type == 'branch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set environment variables
-        run: |
-          echo "REPOSITORY=${{ github.event.repository.name }}" >> $GITHUB_ENV
-          echo "BRANCH_NAME=${{ github.event.ref }}" >> $GITHUB_ENV
+    - name: Authenticate with GCP
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ inputs.SA_KEY }}
 
-      - name: Authenticate with GCP
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.SA_KEY }}
+    - name: Delete BigQuery Schemas
+      shell: bash
+      run: |
+        TABLE_SUFFIX="_${BRANCH_NAME//-/_}"
+        echo "Deleting schemas with suffix $TABLE_SUFFIX in project ${{ inputs.project_id }}"
+        bq --project_id="${{ inputs.project_id }}" ls --format=json | jq -r ".[] | select(.datasetReference.datasetId | endswith(\"$TABLE_SUFFIX\")).datasetReference.datasetId" | while read -r dataset_id; do
+          echo "Deleting dataset: $dataset_id"
+          bq --project_id="${{ inputs.project_id }}" rm -r -f -d "$dataset_id"
+        done
 
-      - name: Delete BigQuery Schemas
-        run: |
-          TABLE_SUFFIX="_${{ env.BRANCH_NAME//-/_ }}"
-          echo "Deleting schemas with suffix $TABLE_SUFFIX in project ${{ inputs.project_id }}"
-          bq --project_id="${{ inputs.project_id }}" ls --format=json | jq -r ".[] | select(.datasetReference.datasetId | endswith(\"$TABLE_SUFFIX\")).datasetReference.datasetId" | while read -r dataset_id; do
-            echo "Deleting dataset: $dataset_id"
-            bq --project_id="${{ inputs.project_id }}" rm -r -f -d "$dataset_id"
-          done
-
-      - name: Delete Dataform Workspace
-        run: |
-          echo "Deleting Dataform workspace: ${{ env.BRANCH_NAME }}"
-          curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${{ inputs.project_id }}/locations/${{ inputs.location }}/repositories/${{ env.REPOSITORY }}/workspaces/${{ env.BRANCH_NAME }}" \
-            -H "Authorization: Bearer $(gcloud auth print-access-token)"
+    - name: Delete Dataform Workspace
+      shell: bash
+      run: |
+        echo "Deleting Dataform workspace: $BRANCH_NAME"
+        curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${{ inputs.project_id }}/locations/${{ inputs.dataform_repo_location }}/repositories/${{ inputs.dataform_repo_name }}/workspaces/$BRANCH_NAME" \
+          -H "Authorization: Bearer $(gcloud auth print-access-token)"
