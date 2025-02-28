@@ -1,0 +1,45 @@
+name: "Cleanup After Branch Deletion"
+author: "Jeremy Juventin"
+description: |
+  This GitHub Action cleans up resources in Google Cloud Platform (GCP) after a branch is deleted. 
+  It deletes corresponding BigQuery schemas and Dataform workspaces.
+  BigQuery schemas : 
+    - Deletes all BigQuery schemas with the corresponding suffix.
+  Dataform workspaces :
+    - Deletes the Dataform workspace with the corresponding branch name.
+
+on:
+  delete:
+    branches:
+      - "**"
+
+env:
+  PROJECT_ID: ${{ vars.PROJECT_ID }}
+  LOCATION: ${{ vars.DATAFORM_REPO_LOCATION }}
+  REPOSITORY: ${{ github.event.repository.name }}
+  BRANCH_NAME: ${{ github.event.ref }}
+
+jobs:
+  cleanup:
+    if: github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.SA_KEY }}
+
+      - name: Delete BigQuery Schemas
+        run: |
+          TABLE_SUFFIX="_${BRANCH_NAME//-/_}"
+          echo "Deleting schemas with suffix $TABLE_SUFFIX in project $PROJECT_ID"
+          bq --project_id="$PROJECT_ID" ls --format=json | jq -r ".[] | select(.datasetReference.datasetId | endswith(\"$TABLE_SUFFIX\")).datasetReference.datasetId" | while read -r dataset_id; do
+            echo "Deleting dataset: $dataset_id"
+            bq --project_id="$PROJECT_ID" rm -r -f -d "$dataset_id"
+          done
+
+      - name: Delete Dataform Workspace
+        run: |
+          echo "Deleting Dataform workspace: $BRANCH_NAME"
+          curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/$PROJECT_ID/locations/$LOCATION/repositories/$REPOSITORY/workspaces/$BRANCH_NAME" \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)"
