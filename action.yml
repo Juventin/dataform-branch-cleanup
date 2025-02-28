@@ -1,4 +1,4 @@
-name: "Cleanup After Branch Deletion"
+name: "Dataform cleanup after branch deletion"
 author: "Jeremy Juventin"
 description: This GitHub Action cleans up rBigQuery schemas and Dataform workspaces after a branch is deleted.
 branding:
