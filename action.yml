@@ -27,7 +27,7 @@ runs:
     - name: Set environment variables
       shell: bash
       run: |
-        echo "BRANCH_NAME=${github.event.ref}" >> $GITHUB_ENV
+        echo "BRANCH_NAME=${{ github.event.ref }}" >> $GITHUB_ENV
 
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v1
@@ -38,15 +38,15 @@ runs:
       shell: bash
       run: |
         TABLE_SUFFIX="_${BRANCH_NAME//-/_}"
-        echo "Deleting schemas with suffix $TABLE_SUFFIX in project ${inputs.project_id}"
-        bq --project_id="${inputs.project_id}" ls --format=json | jq -r ".[] | select(.datasetReference.datasetId | endswith(\"$TABLE_SUFFIX\")).datasetReference.datasetId" | while read -r dataset_id; do
+        echo "Deleting schemas with suffix $TABLE_SUFFIX in project ${{ inputs.project_id }}"
+        bq --project_id="${{ inputs.project_id }}" ls --format=json | jq -r ".[] | select(.datasetReference.datasetId | endswith(\"$TABLE_SUFFIX\")).datasetReference.datasetId" | while read -r dataset_id; do
           echo "Deleting dataset: $dataset_id"
-          bq --project_id="${inputs.project_id}" rm -r -f -d "$dataset_id"
+          bq --project_id="${{ inputs.project_id }}" rm -r -f -d "$dataset_id"
         done
 
     - name: Delete Dataform Workspace
       shell: bash
       run: |
         echo "Deleting Dataform workspace: $BRANCH_NAME"
-        curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${inputs.project_id}/locations/${inputs.location}/repositories/${inputs.dataform_repo_name}/workspaces/$BRANCH_NAME" \
+        curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${{ inputs.project_id }}/locations/${{ inputs.location }}/repositories/${{ inputs.dataform_repo_name }}/workspaces/$BRANCH_NAME" \
           -H "Authorization: Bearer $(gcloud auth print-access-token)"
