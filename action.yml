@@ -21,6 +21,7 @@ inputs:
     description: |-
       Location of the Dataform repository. For example, `us-central1`.
     required: true
+    
 runs:
   using: "composite"
   steps:
@@ -28,6 +29,11 @@ runs:
       shell: bash
       run: |
         echo "BRANCH_NAME=${{ github.event.ref }}" >> $GITHUB_ENV
+
+    - name: Debug SA_KEY
+      run: echo "SA_KEY is set"
+      env:
+        SA_KEY: $SA_KEY
 
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v1
