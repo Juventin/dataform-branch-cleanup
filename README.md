@@ -66,7 +66,6 @@ jobs:
         project_id: 'your-gcp-project-id'
         dataform_repo_name: 'your-dataform-repo-name'
         dataform_repo_location: 'your-dataform-repo-location' (e.g. 'us-central1')
-      env:
         SA_KEY: ${{ secrets.SA_KEY }}
 ```
 

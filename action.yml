@@ -21,6 +21,10 @@ inputs:
     description: |-
       Location of the Dataform repository. For example, `us-central1`.
     required: true
+  SA_KEY:
+    description: |-
+      Service account key used to authenticate with GCP (JSON format).
+    required: true
     
 runs:
   using: "composite"
@@ -29,24 +33,12 @@ runs:
       shell: bash
       run: |
         echo "BRANCH_NAME=${{ github.event.ref }}" >> $GITHUB_ENV
-
-    - name: Debug SA_KEY
-      shell: bash
-        run: |
-          if [ -z "${{ secrets.SA_KEY }}" ]; then
-            echo "SA_KEY is not set"
-          else
-            echo "SA_KEY is set with length ${#SA_KEY}"
-            # Print a masked version of the key
-            echo "Masked SA_KEY: ${SA_KEY:0:10}...${SA_KEY: -10}"
-          fi
-      env:
-        SA_KEY: $SA_KEY
+        echo "SA_KEY=${{ inputs.SA_KEY }}" >> $GITHUB_ENV
 
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: $SA_KEY
+        credentials_json: ${{ inputs.SA_KEY }}
 
     - name: Delete BigQuery Schemas
       shell: bash
