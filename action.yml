@@ -32,7 +32,14 @@ runs:
 
     - name: Debug SA_KEY
       shell: bash
-      run: echo "$SA_KEY is set. SA_KEY"
+        run: |
+          if [ -z "${{ secrets.SA_KEY }}" ]; then
+            echo "SA_KEY is not set"
+          else
+            echo "SA_KEY is set with length ${#SA_KEY}"
+            # Print a masked version of the key
+            echo "Masked SA_KEY: ${SA_KEY:0:10}...${SA_KEY: -10}"
+          fi
       env:
         SA_KEY: $SA_KEY
 
