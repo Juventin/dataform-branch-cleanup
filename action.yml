@@ -54,5 +54,5 @@ runs:
       shell: bash
       run: |
         echo "Deleting Dataform workspace: $BRANCH_NAME"
-        curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${{ inputs.project_id }}/locations/${{ inputs.location }}/repositories/${{ inputs.dataform_repo_name }}/workspaces/$BRANCH_NAME" \
+        curl -X DELETE "https://dataform.googleapis.com/v1beta1/projects/${{ inputs.project_id }}/locations/${{ inputs.dataform_repo_location }}/repositories/${{ inputs.dataform_repo_name }}/workspaces/$BRANCH_NAME" \
           -H "Authorization: Bearer $(gcloud auth print-access-token)"
