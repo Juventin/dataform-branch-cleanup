@@ -2,7 +2,7 @@
 
 ## Description
 
-This GitHub Action cleans up resources in Google Cloud Platform (GCP) after a branch is deleted. 
+This GitHub Action cleans up resources in Google Cloud Platform (GCP) after a branch is **deleted**. 
 
 Managing multiple development branches in a Dataform project can quickly become cumbersome, especially when it comes to cleaning up resources after a branch is deleted. This GitHub Action automates the cleanup process, ensuring that your Google Cloud Platform (GCP) resources are efficiently managed.
 
@@ -70,10 +70,8 @@ jobs:
     steps:
     - uses: 'juventin/dataform-branch-cleanup'
       with:
-        PROJECT_ID: ${{ vars.PROJECT_ID }}
-        LOCATION: ${{ vars.DATAFORM_REPO_LOCATION }}
-        REPOSITORY: ${{ github.event.repository.name }}
-        BRANCH_NAME: ${{ github.event.ref }}
+        project_id: ${{ vars.PROJECT_ID }}
+        location: ${{ vars.DATAFORM_REPO_LOCATION }}
       env:
         SA_KEY: ${{ secrets.SA_KEY }}
 ```
