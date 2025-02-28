@@ -3,10 +3,6 @@ author: "Jeremy Juventin"
 description: |
   This GitHub Action cleans up resources in Google Cloud Platform (GCP) after a branch is deleted.
   It deletes corresponding BigQuery schemas and Dataform workspaces.
-  BigQuery schemas:
-    - Deletes all BigQuery schemas with the corresponding suffix.
-  Dataform workspaces:
-    - Deletes the Dataform workspace with the corresponding branch name.
 
 inputs:
   project_id:
